@@ -1,0 +1,71 @@
+import java.util.Scanner;
+import java.util.InputMismatchException;
+
+public class Lab8 {
+
+    public static int differenceInSeconds(String start, String end) throws InvalidTimeException {
+        String[] startParts = start.split(":");
+        String[] endParts = end.split(":");
+
+        if (startParts.length != 3 || endParts.length != 3) {
+            throw new InvalidTimeException("Timestamp must be in format HH:MM:SS");
+        }
+
+        int startHour = parseAndValidate(startParts[0], "Hours", 0, 23);
+        int startMinute = parseAndValidate(startParts[1], "Minutes", 0, 59);
+        int startSecond = parseAndValidate(startParts[2], "Seconds", 0, 59);
+
+        int endHour = parseAndValidate(endParts[0], "Hours", 0, 23);
+        int endMinute = parseAndValidate(endParts[1], "Minutes", 0, 59);
+        int endSecond = parseAndValidate(endParts[2], "Seconds", 0, 59);
+
+        int startTotalSeconds = startHour * 3600 + startMinute * 60 + startSecond;
+        int endTotalSeconds = endHour * 3600 + endMinute * 60 + endSecond;
+
+        return endTotalSeconds - startTotalSeconds;
+    }
+
+    private static int parseAndValidate(String part, String label, int min, int max) throws InvalidTimeException {
+        int value = Integer.parseInt(part);
+        if (value < min) {
+            throw new InvalidTimeException(label + " must be greater than or equal to " + min);
+        } else if (value > max) {
+            throw new InvalidTimeException(label + " must be less than " + (max + 1));
+        }
+        return value;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("[Time Calculator]");
+
+        while (true) {
+            System.out.println("\n1. Calculate difference in seconds");
+            System.out.println("2. Exit");
+            System.out.print("Enter your option: ");
+            String option = scanner.nextLine();
+
+            if (option.equals("2")) {
+                System.out.println("\nShutting off...");
+                break;
+            } else if (option.equals("1")) {
+                try {
+                    System.out.print("\nEnter the start timestamp: ");
+                    String start = scanner.nextLine();
+
+                    System.out.print("Enter the end timestamp: ");
+                    String end = scanner.nextLine();
+
+                    int diff = differenceInSeconds(start, end);
+                    System.out.println("The difference between " + start + " and " + end + " is " + diff + " seconds");
+                } catch (NumberFormatException e) {
+                    System.out.println("You must enter integers for the hours, minutes, and seconds");
+                } catch (InvalidTimeException e) {
+                    System.out.println(e.getMessage());
+                }
+            } else {
+                System.out.println("Invalid option.");
+            }
+        }
+    }
+}
